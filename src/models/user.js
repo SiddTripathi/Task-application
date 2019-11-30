@@ -1,6 +1,7 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwtoken = require('jsonwebtoken')
 
 
 //converting user object into schema so that middleware function can be aded. Although mongoose converts a object in schema automatically
@@ -45,8 +46,27 @@ const userSchema = new mongoose.Schema({
             }
         }
 
-    }
+    },
+    tokens: [{
+        token: {
+            required: true,
+            type: String
+        }
+    }]
 })
+
+//function to generate web tokens for each user. Now here we user .methods instead of .statics because statics is called
+//for entire model whereas methods are called at particular instances. Here for each user(instance) it is called. 
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = await jwtoken.sign({ _id: user._id.toString() }, 'thisisanothercourse')//generating the tokens using Ids of users
+
+    user.tokens = user.tokens.concat({ token }) //concating the tokens added upon each request. 
+    await user.save()
+    return token
+
+
+}
 
 //function to verify credentials
 userSchema.statics.findByCredential = async (email, password) => {
