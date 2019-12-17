@@ -2,7 +2,7 @@
 const mongoose = require('mongoose')
 const validate = require('validator')
 
-const Tasks = mongoose.model('tasks', {
+const taskSchema = new mongoose.Schema({
     task: {
         type: String,
         required: true,
@@ -22,7 +22,16 @@ const Tasks = mongoose.model('tasks', {
         trim: true,
         default: 'Software Learning',
 
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId,   //owner field is created to add id of user so that both collections can be linked
+        //and tasks belong to a particular user based on its id. 
+        required: true,
+        ref: 'User' //this ref means reference to the User model. This line is added so that User and task models can be 
+        // connected together. Since this is an actual field in document, we dont have to provide local and foreign fields like we did in virtual
     }
 })
+
+const Tasks = mongoose.model('Task', taskSchema)
 
 module.exports = Tasks
