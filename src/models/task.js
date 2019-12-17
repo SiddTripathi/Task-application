@@ -30,6 +30,8 @@ const taskSchema = new mongoose.Schema({
         ref: 'User' //this ref means reference to the User model. This line is added so that User and task models can be 
         // connected together. Since this is an actual field in document, we dont have to provide local and foreign fields like we did in virtual
     }
+}, {
+    timestamps: true
 })
 
 const Tasks = mongoose.model('Task', taskSchema)

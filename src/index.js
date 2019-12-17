@@ -58,26 +58,26 @@ app.listen(port, () => {
 
 //now if we want to get user details from task that is which user created this task
 
-const Task = require('./models/task')
-const User = require('./models/user')
+// const Task = require('./models/task')
+// const User = require('./models/user')
 
-const main = async () => {
+// const main = async () => {
 
-    /*
-    now the below code is used to get user details from task id.
+//     /*
+//     now the below code is used to get user details from task id.
 
-    const task = await Task.findById('5deae8405ec20567a491d300')
-    await task.populate('owner').execPopulate() //this line here will populate the entire document of that ID as refered in owner
-    // that is why we provided reference in task model
-    console.log(task.owner)*/
+//     const task = await Task.findById('5deae8405ec20567a491d300')
+//     await task.populate('owner').execPopulate() //this line here will populate the entire document of that ID as refered in owner
+//     // that is why we provided reference in task model
+//     console.log(task.owner)*/
 
-    /*Now writing code for getting details of task created by the partiular user.*/
-    const user = await User.findById('5deae78dcb19494d70c65f6e')
-    // console.log(user)
-    await user.populate('tasks').execPopulate()
-    // console.log(user.tasks)
+//     /*Now writing code for getting details of task created by the partiular user.*/
+//     // const user = await User.findById('5deae78dcb19494d70c65f6e')
+//     // // console.log(user)
+//     // await user.populate('tasks').execPopulate()
+//     // console.log(user.tasks)
 
 
-}
+// }
 
-main()
+// main()

@@ -23,8 +23,22 @@ router.post('/tasks', auth, async (req, res) => {
 // select query for the task documents
 router.get('/tasks', auth, async (req, res) => {
 
+    const match = {}  //this constant is adding to provide filter on tasks based on completed true or false.
+
+    //this condition checks if their is a query parameter in URL such as /tasks?completed = true or false
+
+
+    if (req.query.completed) {
+        match.completed = req.query.completed === 'true' // if the value of query parameter is true, then match variable is true
+        //else it will be false. Also if there is no value in match then neither true nor false
+        // and the populate() will work normally means fetch all tasks
+    }
+
     try {
-        await req.user.populate('userTasks').execPopulate()
+        await req.user.populate({
+            path: 'userTasks',
+            match
+        }).execPopulate()
         res.status(200).send(req.user.userTasks)
 
         // const task = await Task.find({ owner: req.user._id }) //all tasks created by that user
