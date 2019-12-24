@@ -53,7 +53,11 @@ const userSchema = new mongoose.Schema({
             required: true,
             type: String
         }
-    }]
+    }],
+    avatar: {
+        type: Buffer     //inorder to add image in document, we need to add this field. The image will be stored in binary format. 
+        // This is done because cloud deployment does not support file system storage and image data is lost.
+    }
 }, {
     timestamps: true
 })
@@ -81,7 +85,7 @@ userSchema.virtual('userTasks', {
 
 })
 
-//function to remove confidential data like passwords and tokents when user data is returned.
+//function to remove confidential data like passwords and tokens when user data is returned.
 
 userSchema.methods.toJSON = function () {
 
@@ -90,6 +94,7 @@ userSchema.methods.toJSON = function () {
 
     delete userObject.password  //delete is the operator used to delete elements from the object.
     delete userObject.tokens
+    delete userObject.avatar //delete avatar as we already have a url for fetching it. 
 
     return userObject
 

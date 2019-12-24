@@ -9,9 +9,25 @@ const port = process.env.PORT || 3000  //Creating local port for application
 
 //middleware functions - used to execute a function before running a route handler. 
 
-// app.use((req, res, next) => {
-//     res.status(503).send('Site is under maintainence')
+
+
+
+// const multer = require('multer')
+
+
+// //below is creating the instance of multer tool and providing options for that tool inside the multer object . currently providing
+// //destination folder where images will be stored
+// const upload = multer({
+//     dest: 'images'
 // })
+
+// app.post('/upload', upload.single('upload'), (req, res) => {
+//     res.send()
+// })
+
+
+
+
 
 app.use(express.json())  //Automatically parses incoming JSON into Object format
 
@@ -81,3 +97,5 @@ app.listen(port, () => {
 // }
 
 // main()
+
+

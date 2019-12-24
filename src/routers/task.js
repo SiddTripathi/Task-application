@@ -24,10 +24,20 @@ router.post('/tasks', auth, async (req, res) => {
 router.get('/tasks', auth, async (req, res) => {
 
     const match = {}  //this constant is adding to provide filter on tasks based on completed true or false.
+    const sort = {} //this variable is provided just like above variable but for sorting of records in asc or desc.
+
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split(':') //getting value of parts from query string but since it is not single value 
+        //we are spliting it by ':'. ?sortBy=createdOn:desc
+
+
+        //now here, we are setting first part of our splitted parts as property of sort -> parts[0] and second part of splitted string
+        //as value of that first part -->[part[1]]
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+        console.log(sort)
+    }
 
     //this condition checks if their is a query parameter in URL such as /tasks?completed = true or false
-
-
     if (req.query.completed) {
         match.completed = req.query.completed === 'true' // if the value of query parameter is true, then match variable is true
         //else it will be false. Also if there is no value in match then neither true nor false
@@ -37,7 +47,14 @@ router.get('/tasks', auth, async (req, res) => {
     try {
         await req.user.populate({
             path: 'userTasks',
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit), //number of records per page
+                skip: parseInt(req.query.skip), //from where you want to start eg. if skip=2 then result will display records from 4th
+                //record onwards and skip first 3
+                sort
+            }
+
         }).execPopulate()
         res.status(200).send(req.user.userTasks)
 

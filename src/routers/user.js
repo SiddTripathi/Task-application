@@ -1,7 +1,23 @@
 const express = require('express')
 const router = new express.Router() //creating routers from expressy
 const User = require('../models/user')
+const sharp = require('sharp')
 const auth = require('../middleware/auth')
+const multer = require('multer')
+const upload = multer({
+    // dest: 'avatar', --> this is commented so that image is not saved in avatar folder but instead passed along request so that it can be stored in mongodb
+    limits: {
+        fileSize: 1000000 //this sets limitation on file size which is being uploaded. It is in bytes. So for limit of 1 MB, 1000000 bytes
+    },
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|jpeg|png)$/)) {
+            return cb(new Error('Please upload an image'))
+        }
+
+        cb(undefined, true) //calling call back function with undefined error argument as no error is there and second argument true i.e accpeting ulpoad
+    }
+
+})
 
 
 
@@ -112,6 +128,43 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(400).send(e)
     }
 })
+
+//uploading file to user model
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    //using sharp, we can resize,change format to png etc for image uploaded
+    const buffer = await sharp(req.file.buffer).resize({ width: 300, height: 300 }).png().toBuffer()
+    req.user.avatar = buffer //this will put uploaded image to avatar field of user model.
+    await req.user.save() //saving user after update
+    res.send()
+
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+
+//deleting uploaded file.
+router.delete('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    req.user.avatar = undefined
+    req.user.save()
+    res.send(req.user)
+}, (error, req, res, next) => {
+    res.status(400).send({ error: error.message })
+})
+
+//fetching a image from db
+
+router.get('/users/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+        if (!user || !user.avatar) {
+            throw new Error()
+        }
+        res.set('Content-Type', 'image/png')
+        res.send(user.avatar)
+    } catch (e) {
+        res.status(500).send(e)
+    }
+})
+
 
 
 module.exports = router
