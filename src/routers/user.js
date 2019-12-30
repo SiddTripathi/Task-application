@@ -3,6 +3,7 @@ const router = new express.Router() //creating routers from expressy
 const User = require('../models/user')
 const sharp = require('sharp')
 const auth = require('../middleware/auth')
+const { sendWelcomeEmail, sendCancelEmail } = require('../emails/accounts') //importing email methods from accounts.js
 const multer = require('multer')
 const upload = multer({
     // dest: 'avatar', --> this is commented so that image is not saved in avatar folder but instead passed along request so that it can be stored in mongodb
@@ -63,6 +64,7 @@ router.post('/users', async (req, res) => {
     const user = new User(req.body)
     try {
         await user.save()
+        sendWelcomeEmail(user.email, user.name)
         const token = await user.generateAuthToken()
         res.status(201).send({ user, token })
     } catch (e) {
@@ -123,13 +125,14 @@ router.delete('/users/me', auth, async (req, res) => {
     try {
 
         await req.user.remove()
+        sendCancelEmail(req.user.email, req.user.name) // sends a mail when account is deleted
         res.status(200).send(req.user)
     } catch (e) {
         res.status(400).send(e)
     }
 })
 
-//uploading file to user model
+//uploading file to user model --> upload.single(method)
 router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     //using sharp, we can resize,change format to png etc for image uploaded
     const buffer = await sharp(req.file.buffer).resize({ width: 300, height: 300 }).png().toBuffer()
