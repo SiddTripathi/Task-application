@@ -106,7 +106,7 @@ userSchema.methods.toJSON = function () {
 //for entire model whereas methods are called at particular instances. Here for each user(instance) it is called. 
 userSchema.methods.generateAuthToken = async function () {
     const user = this
-    const token = await jwtoken.sign({ _id: user._id.toString() }, 'thisisanothercourse')//generating the tokens using Ids of users
+    const token = await jwtoken.sign({ _id: user._id.toString() }, process.env.JWT_TOKEN)//generating the tokens using Ids of users
 
     user.tokens = user.tokens.concat({ token }) //concating the tokens added upon each request. 
     await user.save()

@@ -5,9 +5,9 @@ require('./db/mongoose') //importing mongoose db connection
 const userRouter = require('./routers/user')
 const taskRouter = require('./routers/task')
 
-const port = process.env.PORT || 3000  //Creating local port for application
+const port = process.env.PORT   //Creating local port for application
 
-//middleware functions - used to execute a function before running a route handler. 
+//middleware functions - used to execute a function before running a route handlerss. 
 
 
 
@@ -38,7 +38,7 @@ app.use(taskRouter) // creating routes for task router
 
 //Creating local port for application
 app.listen(port, () => {
-    console.log('App is up on port 3000')
+    console.log('App is up on port ' + port)
 })
 
 
