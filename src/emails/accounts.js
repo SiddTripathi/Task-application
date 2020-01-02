@@ -2,7 +2,7 @@
 const sgMail = require('@sendgrid/mail')
 
 //send grid API key which is used by us to send email.
-// const sendgridAPIKey = 'SG.ILS6r-FjQja92JGtVTfNUA.jVRwI13NnkBlue0Lj' -->this is commented as we declared api key seperately in 
+ -->this is commented as we declared api key seperately in 
 //dev.env for security purpose. API keys should not be hardcoded in JS
 
 sgMail.setApiKey(process.env.SEND_GRID_APIKEY)
