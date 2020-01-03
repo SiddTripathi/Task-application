@@ -1,9 +1,7 @@
 {
   "name": "Node_proj",
   "version": "1.0.0",
-  "engines":{
-"node":"12.7.0"
-  },
+  
   "description": "",
   "main": "index.js",
   "scripts": {
